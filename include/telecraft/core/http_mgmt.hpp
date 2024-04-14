@@ -21,8 +21,8 @@ enum class ContentType {
 };
 
 enum class Method {
-  GET,
-  POST
+  POST,
+  GET
 };
 
 //Struct to hold common header fields for building HTTP Telegram requests
@@ -30,7 +30,7 @@ enum class Method {
 struct HeaderFields{
   std::string connection;
   std::string token;
-  const std::string host = "api.telegram.com";
+  const std::string host = "api.telegram.org";
 };
 
 class FieldValidator {
@@ -85,8 +85,8 @@ class HeaderBuilder{
         FieldValidator fieldValidator;
         fieldValidator.validateToken(fields.token);
         fieldValidator.validateConnection(fields.connection);
-      } catch(const std::invalid_argument& arg){
-        std::cerr << "Error occurred while checking fields: " << arg.what() << std::endl;
+      } catch(const std::invalid_argument& e){
+        std::cerr << "Error occurred while checking fields: " << e.what() << std::endl;
         return false;
       }
       return true;

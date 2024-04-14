@@ -85,9 +85,9 @@ class ParametersContainer{
     std::tuple<Args...> parameters;
 };
 
-} //namespace core
+} //core
 
 template<typename T>
 concept TgTypes = telegram::core::TgTypeEntity<T>;
 
-} //namespace telegram
+} //telegram

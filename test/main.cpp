@@ -1,12 +1,25 @@
-#include <telecraft/core.hpp>
-#include <telecraft/types.hpp>
-#include <typeinfo>
+#include <telecraft/api/methods/sendMessage.hpp>
+#include <telecraft/RequestManager.hpp>
+
+/* #include <typeinfo> */
 #include <iostream>
 
+using namespace telegram;
+
 int main(){
-  telegram::core::SendMessage a;
-  a.set<telegram::types::chat_id>(1111);
-  auto b = a.get<telegram::types::chat_id>();
-  std::cout << b << " " << typeid(b).name() << a.getParameterName<telegram::types::text>()<<std::endl;
+  core::RequestComponentManager director;
+  methods::SendMessage* sendMessage = new methods::SendMessage;
+  try{
+    director.fields.token = "fafafaafafafafa";
+    sendMessage->set<param::text>("afafafaafa");
+    sendMessage->set<param::chat_id>(3131);
+    director.newMethod(sendMessage);
+    director.buildAll();
+    std::cout << director.generateHTTP() << std::endl;
+  } catch (const std::exception& e) {
+    std::cout << e.what() << std::endl;
+  }
+
+  delete sendMessage;
   return 0;
 }

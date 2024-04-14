@@ -15,8 +15,8 @@ class RequestGenerator{
 
       try{
         generalCheck(header, body);
-      } catch(const std::invalid_argument& ex){
-        std::cerr << ex.what() << std::endl;
+      } catch(const std::invalid_argument& e){
+        std::cerr << e.what() << std::endl;
         throw std::runtime_error("Can't create request!");
         return "";
       }
@@ -40,7 +40,7 @@ class RequestGenerator{
     }
 
     static std::string buildRequestLine(http::HeaderManager& header, MethodBuilder* body) {
-      return http::TC_Method[static_cast<int>(body->getMethod())] +
+      return http::TC_Method[static_cast<int>(body->getMethod())] + " " +
              header.getHeader()[0] + "/" + body->getName() +
              " HTTP 1.1" + fieldEnd;
     }
