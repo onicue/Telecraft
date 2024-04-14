@@ -6,7 +6,6 @@
 #include <unordered_map>
 
 namespace telegram {
-namespace types{
 namespace core{
 
 struct BaseParameter {
@@ -68,9 +67,9 @@ class ParametersContainer{
       std::apply([&func](auto&... args) { (func(args), ...); }, parameters);
     }
 
-    template<TgTypeEntity ParamType>
+    template<TgTypeEntity T>
     bool contains() const {
-      return parameters_map.contains(ParamType().name);
+      return parameters_map.contains(T().name);
     }
 
     bool contains(const std::string& name) const {
@@ -89,7 +88,6 @@ class ParametersContainer{
 } //namespace core
 
 template<typename T>
-concept TgTypes = telegram::types::core::TgTypeEntity<T>;
+concept TgTypes = telegram::core::TgTypeEntity<T>;
 
-} //namespace types
 } //namespace telegram

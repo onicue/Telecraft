@@ -1,8 +1,9 @@
 #pragma once
-#include "types_core.hpp"
+#include "../core/params_mgmt.hpp"
 #include <string>
+
 namespace telegram {
-namespace types {
+namespace param {
 
 #define CLASS_NAME(Class) #Class
 
@@ -24,5 +25,5 @@ struct chat_id : public core::ParametersBuilder<int> {
 
 DEFINE_PARAMETERS_BUILDER(text, std::string);
 
-} // namespace types
-} //namespace telegram
+} //param
+} //telegram
