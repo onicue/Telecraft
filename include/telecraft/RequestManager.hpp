@@ -31,7 +31,7 @@ class RequestGenerator{
     };
 
   private:
-    static constexpr char fieldEnd[] = "\n\r";
+    static constexpr char fieldEnd[] = "\r\n";
 
     static void generalCheck(http::HeaderManager& header, MethodBuilder* body) {
       if(header.getHeader().empty()){
@@ -42,7 +42,7 @@ class RequestGenerator{
     static std::string buildRequestLine(http::HeaderManager& header, MethodBuilder* body) {
       return http::TC_Method[static_cast<int>(body->getMethod())] + " " +
              header.getHeader()[0] + "/" + body->getName() +
-             " HTTP 1.1" + fieldEnd;
+             " HTTP/1.1" + fieldEnd;
     }
 
     static std::string buildHeaderFields(http::HeaderManager& header){
@@ -63,7 +63,7 @@ class RequestGenerator{
     }
 
     static std::string buildBody(MethodBuilder* body){
-      return body->getBody();
+      return fieldEnd + body->getBody();
     }
 };
 

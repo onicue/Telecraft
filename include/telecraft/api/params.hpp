@@ -12,13 +12,13 @@ namespace param {
           Class() : core::ParametersBuilder<Type>(CLASS_NAME(Class)) {}\
         };
 
-struct chat_id : public core::ParametersBuilder<int> {
+struct chat_id : public core::ParametersBuilder<long int> {
   chat_id() : core::ParametersBuilder<ValueType>("chat_id") {}
   void set(const std::string& value) {
-    value_ = std::stoi(value);
+    value_ = std::stol(value);
   }
 
-  void set(const int& value) {
+  void set(const long int& value) {
     value_ = value;
   }
 };
