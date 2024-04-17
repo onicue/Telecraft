@@ -1,4 +1,4 @@
-set(SOURCES main.cpp net/posix_ssl.cpp)
+set(SOURCES main.cpp net/posix_ssl.cpp utils.cpp)
 
 add_executable(test ${SOURCES})
 # target_compile_options(test PRIVATE -fsanitize=address)

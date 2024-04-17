@@ -1,6 +1,7 @@
 #include <telecraft/api/methods/sendMessage.hpp>
 #include <telecraft/RequestManager.hpp>
 #include "net/posix_ssl.h"
+#include "utils.h"
 
 /* #include <typeinfo> */
 #include <iostream>
@@ -28,7 +29,11 @@ int main(){
     std::string message = director.generateHTTP();
     std::cout << message << std::endl;
     client.send(message);
-    std::cout << client.recv() << std::endl;
+
+    auto recv_message = client.recv();
+    if(checkValidityRequest(recv_message)){
+      std::cout << recv_message << std::endl;
+    }
   } catch (const std::exception& e) {
     std::cout << e.what() << std::endl;
   }
