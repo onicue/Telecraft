@@ -1,6 +1,6 @@
 #pragma once
-#include "core/http_mgmt.hpp"
-#include "core/params_mgmt.hpp"
+#include "core/HttpManagement.hpp"
+#include "core/ParamsManagement.hpp"
 #include <string>
 
 namespace telegram {

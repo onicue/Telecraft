@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include "MethodBuilders.hpp"
-#include "core/http_mgmt.hpp"
+#include "core/HttpManagement.hpp"
 
 namespace telegram {
 namespace core {

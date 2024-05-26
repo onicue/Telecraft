@@ -1,5 +1,5 @@
 #pragma once
-#include "../core/params_mgmt.hpp"
+#include "../core/ParamsManagement.hpp"
 #include <string>
 
 namespace telegram {
