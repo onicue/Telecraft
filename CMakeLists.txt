@@ -17,7 +17,7 @@ option(USE_BOOST "Use Boost libraries" ON)
 option(ENABLE_TESTS "Enable testing" ON)
 
 if(USE_BOOST OR ENABLE_TESTS)
-  find_package(Boost ${Boost_MIN_VERSION} REQUIRED COMPONENTS system filesystem  unit_test_framework)
+  find_package(Boost ${Boost_MIN_VERSION} REQUIRED COMPONENTS system filesystem unit_test_framework)
   if(Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})
   else()

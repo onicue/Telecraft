@@ -1,26 +1,9 @@
-# create the testing file and list of tests
-
-# add_executable(TestInstantiator main.cpp)
-# target_link_libraries(TestInstantiator
-#                       PRIVATE
-#                       # ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
-#                       Boost::filesystem
-#                       Boost::system
-#                       Boost::unit_test_framework
-# )
-#
-# add_test(hui TestInstantiator)
-
-
-
-
-# Create the list of tests
 set(TestToRun
   main.cpp
   # Add more tests as needed
 )
 
-set(TestLibs
+set(TestLibs #libraries for TestToRun
     Boost::filesystem
     Boost::system
     Boost::unit_test_framework
@@ -36,3 +19,5 @@ foreach(test ${TestToRun})
   get_filename_component(TName ${test} NAME_WE)
   add_new_test(${TName} ${test} "${TestLibs}" "")
 endforeach()
+
+#if you need specific tests add at the bottom
