@@ -3,7 +3,6 @@
 #include <sstream>
 #include <tuple>
 #include <type_traits>
-#include <unordered_map>
 #include "../utils/fix_string.hpp"
 
 namespace telegram {
@@ -27,6 +26,29 @@ std::string ConvertStringTo <std::string>(const std::string &str) {
   return str;
 }
 
+template<typename T, StringLiteral set_name>
+struct ParametersBuilder : BaseParameter {
+  using ValueType = T;
+
+  static_assert(!std::is_same_v<T, void>, "Warning: ParametersBuilder cannot be instantiated with void type");
+
+  ParametersBuilder() : name(set_name.value) {}
+
+  ParametersBuilder(T value) : name(set_name.value), value(value) {}
+
+  virtual T get () { return this->value; }
+  virtual void set (const T& value) { this->value = value; }
+
+  virtual void serialize (const std::string& value) override {
+    this->value = ConvertStringTo<T>(value);
+  };
+
+  const std::string name;
+
+protected:
+  T value;
+};
+
 template<typename T>
 concept TgTypeEntity = std::is_base_of_v<BaseParameter, T> &&
     requires (T obj) {
@@ -35,40 +57,10 @@ concept TgTypeEntity = std::is_base_of_v<BaseParameter, T> &&
       { obj.name };
     };
 
-template<typename T, StringLiteral set_name = "">
-struct ParametersBuilder : BaseParameter {
-using ValueType = T; //for type cast
-  ParametersBuilder() : name(set_name.value) {
-    checkName(name);
-  }
-
-  ParametersBuilder(const std::string& new_name) : name(new_name){
-    checkName(name);
-  }
-
-  virtual T get () { return value_; }
-  virtual void set (const T& value) { value_ = value; }
-
-  virtual void serialize (const std::string& value) override {
-    value_ = ConvertStringTo<T>(value);
-  };
-
-  const std::string name;
-protected:
-  void checkName(const std::string& name){
-    if(name.empty()){
-      throw std::runtime_error("name is empty in ParametersBuilder, maybe u didn't set name");
-    }
-  }
-  T value_;
-};
-
 template<TgTypeEntity... Args>
 class ParametersContainer{
 public:
-  ParametersContainer(){
-    generateParameters<Args...>();
-  }
+  ParametersContainer(){}
 
   template<TgTypeEntity T>
   auto& at(){
@@ -81,20 +73,22 @@ public:
   }
 
   template<TgTypeEntity T>
-  bool contains() const {
-    return parameters_map.contains(T().name);
+  static constexpr bool contains() {
+    return containsImpl<T, Args...>();
   }
 
-  bool contains(const std::string& name) const {
-    return parameters_map.contains(name);
-  }
 private:
-  template<typename... Ts>
-  void generateParameters() {
-      ((parameters_map.emplace(Ts().name, &std::get<Ts>(parameters))), ...);
+  template<TgTypeEntity T, TgTypeEntity First, TgTypeEntity... Rest>
+  static constexpr bool containsImpl() {
+    if constexpr (std::is_same_v<T, First>) {
+      return true;
+    } else if constexpr (sizeof...(Rest) > 0) {
+      return containsImpl<T, Rest...>();
+    } else {
+      return false;
+    }
   }
 
-  std::unordered_map<std::string, BaseParameter*> parameters_map;
   std::tuple<Args...> parameters;
 };
 

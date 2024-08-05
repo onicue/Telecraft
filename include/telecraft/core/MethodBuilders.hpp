@@ -7,48 +7,47 @@
 namespace telegram {
 namespace core {
 
-class MethodInfo {
+class BaseMethod {
 public:
-  MethodInfo(const std::string& name, http::ContentType content_type, http::Method method)
-      : _name(name), _content_type(content_type), _method(method) {}
+  virtual ~BaseMethod() {};
+  BaseMethod() {}
+  virtual void build() = 0;
+  virtual std::string getBody() = 0;
+  virtual std::string getName() = 0;
+  virtual http::ContentType getContentType() = 0;
+  virtual http::Method getMethod() = 0;
+};
 
-  std::string getMethodName(){ return _name; }
-  http::ContentType getContentType(){ return _content_type; }
-  http::Method getMethod(){ return _method; }
-
+template<StringLiteral name,
+         http::ContentType content_type = http::ContentType::Json,
+         http::Method method = http::Method::POST>
+class MethodInfo : public BaseMethod {
+public:
+  MethodInfo() : _name(name), _method(method), _content_type(content_type) {}
+  std::string getName() override { return _name; }
+  http::ContentType getContentType() override { return _content_type; }
+  http::Method getMethod() override { return _method; }
 private:
   http::ContentType _content_type;
   http::Method _method;
   std::string _name;
 };
 
-template<StringLiteral name,
-          http::ContentType content_type = http::ContentType::Json,
-          http::Method method = http::Method::POST>
-class MethodBuilder : public MethodInfo {
-public:
-    virtual ~MethodBuilder(){};
-    MethodBuilder() : MethodInfo(name.value, content_type, method){}
-    virtual void build() = 0;
-    /*virtual void serializeMessageToJson(const string& http) = 0; */
-    virtual std::string getBody() = 0;
-};
-
 template<TgTypes... AvailableTypes>
-class MethodUI {
+class ParamManager {
 public:
-  virtual ~MethodUI(){}
+  virtual ~ParamManager() {}
 
-  template<TgTypes ParamType, typename ValueType = ParamType::ValueType>
+  template<TgTypes ParamType, typename ValueType = typename ParamType::ValueType>
   constexpr ValueType get() {
-    if (checkContent<ValueType>("get")) {
+    if (checkContent<ParamType>("get")) {
       return parameters.template at<ParamType>().get();
     }
   }
 
-  template<TgTypes ParamType, typename ValueType = ParamType::ValueType>
+  template<TgTypes ParamType, typename ValueType = typename ParamType::ValueType>
   constexpr void set(const ValueType& value) {
-    if (checkContent<ValueType>("set")) {
+    if (checkContent<ParamType>("set")) {
       parameters.template at<ParamType>().set(value);
     }
   }
@@ -58,10 +57,9 @@ public:
     return parameters.template at<ParamType>().name;
   }
 
-
   template<TgTypes ParamType>
-  constexpr void setParam(ParamType& param){
-    if(checkContent<ParamType>("setParam")){
+  constexpr void setParam(ParamType& param) {
+    if (checkContent<ParamType>("setParam")) {
       parameters.template at<ParamType>().set(param.get());
     }
   }
@@ -72,22 +70,22 @@ public:
   }
 
 protected:
-  template<typename T>
-  bool checkContent(std::string method_name = ""){
+  template<TgTypes T>
+  inline bool checkContent(std::string method_name = "") {
     std::string error_msg = "invalid argument";
-    if(!method_name.empty()){
+    if (!method_name.empty()) {
       method_name = " " + method_name;
     }
 
-    if(!parameters.template contains<T>()){
+    if (!parameters.template contains<T>()) {
       throw std::invalid_argument(error_msg + method_name);
       return false;
     }
-    return  true;
+    return true;
   }
 
   ParametersContainer<AvailableTypes...> parameters;
 };
 
-} //core
-} //telegram
+} // core
+} // telegram

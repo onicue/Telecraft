@@ -8,12 +8,12 @@ namespace param {
 
 #define CLASS_NAME(Class) #Class
 
-#define DEFINE_PARAMETERS_BUILDER(Class, Type)\
-        struct Class : public core::ParametersBuilder<Type> { \
-          Class(Type value) : ParametersBuilder(CLASS_NAME(Class)){\
-            this->value_ = value;\
+#define DEFINE_TG_PARAMETER(Class, Type)\
+        struct Class : public core::ParametersBuilder<Type, CLASS_NAME(Class)> { \
+          Class(Type value) {\
+            this->value = value;\
           }\
-          Class() : ParametersBuilder(CLASS_NAME(Class)) {}\
+          Class() {}\
         };
 
 struct chat_id : public core::ParametersBuilder<long int, "chat_id"> {
@@ -23,7 +23,7 @@ struct chat_id : public core::ParametersBuilder<long int, "chat_id"> {
   }
   void set(const std::string& value) {
     try {
-      value_ = std::stol(value);
+      this->value = std::stol(value);
     } catch (const std::invalid_argument& e) {
       std::cerr << "Invalid argument: " << e.what() << std::endl;
     } catch (const std::out_of_range& e) {
@@ -32,11 +32,11 @@ struct chat_id : public core::ParametersBuilder<long int, "chat_id"> {
   }
 
   void set(const long int& value) {
-    value_ = value;
+    this->value = value;
   }
 };
 
-DEFINE_PARAMETERS_BUILDER(text, std::string);
+DEFINE_TG_PARAMETER(text, std::string);
 
 } //param
 } //telegram

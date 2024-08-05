@@ -5,7 +5,7 @@
 
 namespace telegram {
 namespace methods {
-class SendMessage : public core::MethodBuilder<"sendMessage">, public core::MethodUI<param::chat_id, param::text> {
+class SendMessage : public telegram::core::MethodInfo<"sendMessage">, public core::ParamManager<param::chat_id, param::text> {
 public:
   SendMessage(){}
 

@@ -8,7 +8,7 @@ namespace core {
 
 class RequestGenerator{
 public:
-  static std::string generate(http::HeaderManager& header, MethodBuilder* body){
+  static std::string generate(http::HeaderManager& header, BaseMethod* body){
     if(body == nullptr){
       throw std::invalid_argument("Body is null in RequestGenerator!");
     }
@@ -33,19 +33,19 @@ public:
 private:
   static constexpr char fieldEnd[] = "\r\n";
 
-  static void generalCheck(http::HeaderManager& header, MethodBuilder* body) {
+  static inline void generalCheck(http::HeaderManager& header, BaseMethod* body) {
     if(header.getHeader().empty()){
       throw std::invalid_argument("ERROR: Header is empty in RequestGenerator!");
     }
   }
 
-  static std::string buildRequestLine(http::HeaderManager& header, MethodBuilder* body) {
+  static inline std::string buildRequestLine(http::HeaderManager& header, BaseMethod* body) {
     return http::TC_Method[static_cast<int>(body->getMethod())] + " " +
            header.getHeader()[0] + "/" + body->getName() +
            " HTTP/1.1" + fieldEnd;
   }
 
-  static std::string buildHeaderFields(http::HeaderManager& header){
+  static inline std::string buildHeaderFields(http::HeaderManager& header){
     std::string headerFields;
     for (int i = 1; i < header.getHeader().size(); i++) {
       headerFields += header.getHeader()[i] + fieldEnd;
@@ -54,15 +54,15 @@ private:
     return headerFields;
   }
 
-  static std::string buildContentType(MethodBuilder* body){
+  static inline std::string buildContentType(BaseMethod* body){
     return "Content-Type: " + http::TC_ContentType[static_cast<int>(body->getContentType())] + fieldEnd;
   }
 
-  static std::string buildContentLength(MethodBuilder* body){
+  static inline std::string buildContentLength(BaseMethod* body){
     return "Content-Length: " + std::to_string(body->getBody().size()) + fieldEnd;
   }
 
-  static std::string buildBody(MethodBuilder* body){
+  static inline std::string buildBody(BaseMethod* body){
     return fieldEnd + body->getBody();
   }
 };
@@ -72,7 +72,7 @@ public:
   http::HeaderFields fields;
   http::HeaderManager header;
 
-  void newMethod(MethodBuilder* method){
+  void newMethod(BaseMethod* method){
     if(methodIsNull()){
       throw std::invalid_argument("Method is null in newMethod!");
     } else {
@@ -103,7 +103,7 @@ public:
 
 protected:
   bool methodIsNull() { return method == nullptr; }
-  MethodBuilder* method;
+  BaseMethod* method;
 };
 
 } //core
