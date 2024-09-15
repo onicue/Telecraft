@@ -51,7 +51,7 @@ namespace json {
 
     auto err = glz::write<glz::opts{}>(obj, buffer);
     if (err) {
-      std::cerr << err.custom_error_message << std::endl;
+      std::cerr << "JSON write error: " << err.custom_error_message << std::endl;
     }
     return buffer;
   }
