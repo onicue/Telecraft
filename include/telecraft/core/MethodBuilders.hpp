@@ -40,15 +40,15 @@ public:
   virtual ~ParamManager() {}
 
   template<TgType ParamType, typename ValueType = typename ParamType::ValueType>
-  constexpr ValueType get() {
+  ValueType get() {
     if (checkContent<ParamType>("get")) {
       return parameters.template at<ParamType>().get();
     }
   }
 
   template<TgType ParamType, typename ValueType = typename ParamType::ValueType>
-  constexpr void set(const ValueType& value) {
-    if (checkContent<ParamType>("set")) {
+  void set(const ValueType& value) {
+    if constexpr (checkContent<ParamType>("set")) {
       parameters.template at<ParamType>().set(value);
     }
   }

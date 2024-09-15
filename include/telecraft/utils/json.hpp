@@ -2,7 +2,6 @@
 #include <glaze/json/json_t.hpp>
 #include <type_traits>
 #include <glaze/glaze.hpp>
-#include "../core/ParamsManagement.hpp"
 #include "TgTypes.hpp"
 #include <iostream>
 

@@ -7,6 +7,10 @@ struct StringLiteral {
     constexpr StringLiteral(const char (&str)[N]) {
         std::copy_n(str, N, value);
     }
+
+    constexpr StringLiteral (const StringLiteral<N>& other){
+        std::copy_n(other.value, N, value);
+    }
     char value[N];
 
     constexpr operator std::string() const {
