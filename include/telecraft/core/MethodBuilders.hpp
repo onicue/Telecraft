@@ -34,46 +34,46 @@ private:
   std::string _name;
 };
 
-template<TgTypes... AvailableTypes>
+template<TgType... AvailableTypes>
 class ParamManager {
 public:
   virtual ~ParamManager() {}
 
-  template<TgTypes ParamType, typename ValueType = typename ParamType::ValueType>
+  template<TgType ParamType, typename ValueType = typename ParamType::ValueType>
   constexpr ValueType get() {
     if (checkContent<ParamType>("get")) {
       return parameters.template at<ParamType>().get();
     }
   }
 
-  template<TgTypes ParamType, typename ValueType = typename ParamType::ValueType>
+  template<TgType ParamType, typename ValueType = typename ParamType::ValueType>
   constexpr void set(const ValueType& value) {
     if (checkContent<ParamType>("set")) {
       parameters.template at<ParamType>().set(value);
     }
   }
 
-  template<TgTypes ParamType>
+  template<TgType ParamType>
   constexpr std::string getParameterName() {
     return parameters.template at<ParamType>().getName();
   }
 
-  template<TgTypes ParamType>
+  template<TgType ParamType>
   constexpr void setParam(ParamType& param) {
     if (checkContent<ParamType>("setParam")) {
       parameters.template at<ParamType>().set(param.get());
     }
   }
 
-  template <TgTypes... Params>
+  template <TgType... Params>
   constexpr void setParams(Params&... params) {
     (setParam(params), ...);
   }
 
-  template<TgTypes... T>
+  template<TgType... T>
   friend std::string json::serialize(core::ParamManager<T...>& mngr);
 protected:
-  template<TgTypes T>
+  template<TgType T>
   constexpr bool checkContent(std::string method_name = "") {
     std::string error_msg = "invalid argument";
     if (!method_name.empty()) {

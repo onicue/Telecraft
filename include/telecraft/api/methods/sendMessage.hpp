@@ -11,7 +11,7 @@ class SendMessage : public telegram::core::MethodInfo<"sendMessage">, public cor
 public:
   SendMessage(){}
 
-  template<TgTypes... Args>
+  template<TgType... Args>
   SendMessage(Args... args) {
     setParams(args...);
   }

@@ -3,11 +3,12 @@
 #include <type_traits>
 #include <glaze/glaze.hpp>
 #include "../core/ParamsManagement.hpp"
+#include "TgTypes.hpp"
 #include <iostream>
 
 namespace telegram {
 namespace core {
-  template<TgTypes... AvailableTypes>
+  template<TgType... AvailableTypes>
   class ParamManager;
 }
 
@@ -34,7 +35,7 @@ namespace json {
     }
   }
 
-  template<TgTypes... T>
+  template<TgType... T>
   std::string serialize(core::ParamManager<T...>& mngr){
     auto& container = mngr.parameters;
     object_t obj;
@@ -56,7 +57,7 @@ namespace json {
     return buffer;
   }
 
-  template<TgTypes... T>
+  template<TgType... T>
   bool deserialize(core::ParamManager<T...>& mngr, const std::string& json){
     auto& container = mngr.parameters;
     object_t obj;

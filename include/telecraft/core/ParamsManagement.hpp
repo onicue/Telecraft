@@ -1,11 +1,11 @@
 #pragma once
-#include <concepts>
-#include <string>
 #include <sstream>
 #include <tuple>
 #include <type_traits>
 #include <unordered_map>
 #include "../utils/fix_string.hpp"
+#include "../utils/TgTypes.hpp"
+
 namespace telegram {
 namespace core{
 
@@ -52,22 +52,14 @@ protected:
   std::string _name;
 };
 
-template<typename T>
-concept TgTypeEntity = std::is_base_of_v<BaseParameter, T> || std::is_base_of_v<BaseMethod, T> &&
-    requires (T obj) {
-      { obj.get() } -> std::convertible_to<typename T::ValueType>;
-      { obj.set(std::declval<decltype(obj.get())>()) };
-      { obj.getName() } -> std::same_as<std::string>;
-    };
-
-template<TgTypeEntity... Args>
+template<TgType... Args>
 class ParametersContainer{
 public:
   ParametersContainer(){
     generateParameters<Args...>();
   }
 
-  template<TgTypeEntity T>
+  template<TgType T>
   auto& at(){
     return std::get<T>(parameters);
   }
@@ -77,7 +69,7 @@ public:
     std::apply([&func](auto&... args) { (func(args), ...); }, parameters);
   }
 
-  template<TgTypeEntity T>
+  template<TgType T>
   static constexpr bool contains() {
     return contains<T, Args...>();
   }
@@ -96,7 +88,7 @@ public:
     return parameters_map.at(name);
   }
 private:
-  template<TgTypeEntity T, TgTypeEntity First, TgTypeEntity... Rest>
+  template<TgType T, TgType First, TgType... Rest>
   static constexpr bool contains() {
     if constexpr (std::is_same_v<T, First>) {
       return true;
@@ -119,8 +111,4 @@ private:
 };
 
 } //core
-
-template<typename T>
-concept TgTypes = telegram::core::TgTypeEntity<T>;
-
 } //telegram
