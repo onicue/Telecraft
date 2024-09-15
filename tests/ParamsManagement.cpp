@@ -30,7 +30,7 @@ BOOST_AUTO_TEST_SUITE(ParamsManagement)
     second.serialize("121212");
     BOOST_CHECK_EQUAL(second.get(), "121212");
 
-    BOOST_CHECK_EQUAL(first.name, "first_param");
+    BOOST_CHECK_EQUAL(first.getName(), "first_param");
   }
 
   BOOST_AUTO_TEST_CASE(TestParamContainer) {

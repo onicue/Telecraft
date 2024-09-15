@@ -1,4 +1,4 @@
-#include <telecraft/api/methods/sendMessage.hpp>
+#include <telecraft/api/methods.hpp>
 #include <telecraft/RequestManager.hpp>
 
 #include <iostream>
@@ -32,22 +32,3 @@ int main(){
   delete sendMessage;
   return 0;
 }
-
-/**/
-/**/
-/**/
-/*#define BOOST_TEST_MODULE ExampleTest*/
-/*#include <boost/test/unit_test.hpp>*/
-/**/
-/*BOOST_AUTO_TEST_SUITE(ExampleSuite)*/
-/**/
-/*BOOST_AUTO_TEST_CASE( my_test )*/
-/*{*/
-/**/
-/*    BOOST_CHECK(true);*/
-/*    BOOST_CHECK(1 == 1);*/
-/*    BOOST_CHECK(1 >= 0);*/
-/*    BOOST_CHECK(0 != 0);*/
-/*}*/
-/**/
-/*BOOST_AUTO_TEST_SUITE_END()*/
