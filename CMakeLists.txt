@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.26)
+cmake_minimum_required(VERSION 3.30)
 project(Telecraft
         DESCRIPTION "A versatile and efficient Telegram message builder library"
         HOMEPAGE_URL "https://github.com/onicue/Telecraft"
@@ -24,6 +24,18 @@ if(USE_BOOST OR ENABLE_TESTS)
     message(FATAL_ERROR "Boost not found!")
   endif()
 endif()
+
+include(FetchContent)
+
+FetchContent_Declare(
+  glaze
+  GIT_REPOSITORY https://github.com/stephenberry/glaze.git
+  GIT_TAG main
+  GIT_SHALLOW TRUE
+  FIND_PACKAGE_ARGS
+)
+
+FetchContent_MakeAvailable(glaze)
 
 if(ENABLE_TESTS)
     if(NOT USE_BOOST)
