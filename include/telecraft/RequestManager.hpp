@@ -73,7 +73,7 @@ public:
   http::HeaderManager header;
 
   void newMethod(BaseMethod* method){
-    if(methodIsNull()){
+    if(methodIsNull(method)){
       throw std::invalid_argument("Method is null in newMethod!");
     } else {
       this->method = method;
@@ -85,7 +85,7 @@ public:
   }
 
   void buildMethod(){
-    if(methodIsNull()){
+    if(methodIsNull(method)){
       throw std::invalid_argument("Building was stopped: Method is null in buildMethod!");
       return;
     }
@@ -102,7 +102,7 @@ public:
   }
 
 protected:
-  bool methodIsNull() { return method == nullptr; }
+  bool methodIsNull(BaseMethod* method) { return method == nullptr; }
   BaseMethod* method;
 };
 

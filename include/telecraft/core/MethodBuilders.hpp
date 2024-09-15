@@ -2,6 +2,7 @@
 #include "HttpManagement.hpp"
 #include "ParamsManagement.hpp"
 #include "../utils/fix_string.hpp"
+#include "../utils/json.hpp"
 #include <string>
 
 namespace telegram {
@@ -54,7 +55,7 @@ public:
 
   template<TgTypes ParamType>
   constexpr std::string getParameterName() {
-    return parameters.template at<ParamType>().name;
+    return parameters.template at<ParamType>().getName();
   }
 
   template<TgTypes ParamType>
@@ -69,15 +70,17 @@ public:
     (setParam(params), ...);
   }
 
+  template<TgTypes... T>
+  friend std::string json::serialize(core::ParamManager<T...>& mngr);
 protected:
   template<TgTypes T>
-  inline bool checkContent(std::string method_name = "") {
+  constexpr bool checkContent(std::string method_name = "") {
     std::string error_msg = "invalid argument";
     if (!method_name.empty()) {
       method_name = " " + method_name;
     }
 
-    if (!parameters.template contains<T>()) {
+    if constexpr (!parameters.template contains<T>()) {
       throw std::invalid_argument(error_msg + method_name);
       return false;
     }
