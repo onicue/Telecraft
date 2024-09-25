@@ -10,10 +10,7 @@ namespace param {
 
 #define DEFINE_TG_PARAMETER(Class, Type)\
         struct Class : public core::ParametersBuilder<Type, CLASS_NAME(Class)> { \
-          Class(Type value) {\
-            this->value = value;\
-          }\
-          Class() {}\
+          using ParametersBuilder::ParametersBuilder; \
         };
 
 struct chat_id : public core::ParametersBuilder<long int, "chat_id"> {
