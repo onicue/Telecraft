@@ -50,8 +50,17 @@ struct ParametersBuilder : BaseParameter {
 
   ParametersBuilder(T value) : value(value) {}
 
-  virtual T get () const { return this->value; }
-  virtual void set (const T& value) { this->value = value; }
+  virtual T get () const {
+    return this->value;
+  }
+
+  virtual void set (const T& value) {
+    this->value = value;
+  }
+
+  constexpr std::string getName() const override {
+    return name;
+  }
 
   virtual void deserialize (const glz::json_t& value) override {
     using ParamType =  typename json::TypeMapper<T>::type;
@@ -65,7 +74,6 @@ struct ParametersBuilder : BaseParameter {
       std::cerr << "Cannot convert string for " << name << ". Error: " << e.what() << std::endl;
     }
   }
-  constexpr std::string getName() const override { return name; }
 protected:
   T value;
 };

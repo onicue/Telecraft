@@ -26,9 +26,17 @@ template<StringLiteral name,
 class MethodInfo : public BaseMethod {
 public:
   MethodInfo() {}
-  constexpr std::string getName() override { return name; }
-  constexpr http::ContentType getContentType() override { return content_type; }
-  constexpr http::Method getMethod() override { return method; }
+  constexpr std::string getName() override {
+    return name;
+  }
+
+  constexpr http::ContentType getContentType() override {
+    return content_type;
+  }
+
+  constexpr http::Method getMethod() override {
+    return method;
+  }
 };
 
 template<TgType... AvailableTypes>
