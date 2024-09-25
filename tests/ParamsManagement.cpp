@@ -2,6 +2,8 @@
 #include <boost/test/unit_test.hpp>
 #include <telecraft/core/ParamsManagement.hpp>
 
+using namespace std::string_literals;
+
 struct FirstParam : telegram::core::ParametersBuilder<int, "first_param"> {
   using ParametersBuilder::ParametersBuilder;
 };
@@ -24,13 +26,23 @@ BOOST_AUTO_TEST_SUITE(ParamsManagement)
     BOOST_CHECK_EQUAL(first.get(), 31311);
     BOOST_CHECK_EQUAL(second.get(), "4141");
 
-    first.serialize("31311");
-    BOOST_CHECK_EQUAL(first.get(), 31311);
-
-    second.serialize("121212");
-    BOOST_CHECK_EQUAL(second.get(), "121212");
 
     BOOST_CHECK_EQUAL(first.getName(), "first_param");
+
+     glz::json_t json = {
+      { "first_param", 31311 },
+      { "second_param", "121212"}
+    };
+
+    first.deserialize(json.at(first.getName())); //glz::json_t(31311)
+    BOOST_CHECK_EQUAL(first.get(), 31311);
+
+    second.deserialize(json.at(second.getName()));
+    BOOST_CHECK_EQUAL(second.get(), "121212");
+
+
+    first.deserialize("414141"s);
+    BOOST_CHECK_EQUAL(first.get(), 414141);
   }
 
   BOOST_AUTO_TEST_CASE(TestParamContainer) {

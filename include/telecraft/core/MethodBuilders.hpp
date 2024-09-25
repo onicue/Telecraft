@@ -17,6 +17,7 @@ public:
   virtual std::string getName() = 0;
   virtual http::ContentType getContentType() = 0;
   virtual http::Method getMethod() = 0;
+  virtual void deserialize(const std::string& json) = 0;
 };
 
 template<StringLiteral name,
@@ -24,14 +25,10 @@ template<StringLiteral name,
          http::Method method = http::Method::POST>
 class MethodInfo : public BaseMethod {
 public:
-  MethodInfo() : _name(name), _method(method), _content_type(content_type) {}
-  std::string getName() override { return _name; }
-  http::ContentType getContentType() override { return _content_type; }
-  http::Method getMethod() override { return _method; }
-private:
-  http::ContentType _content_type;
-  http::Method _method;
-  std::string _name;
+  MethodInfo() {}
+  constexpr std::string getName() override { return name; }
+  constexpr http::ContentType getContentType() override { return content_type; }
+  constexpr http::Method getMethod() override { return method; }
 };
 
 template<TgType... AvailableTypes>
@@ -41,16 +38,12 @@ public:
 
   template<TgType ParamType, typename ValueType = typename ParamType::ValueType>
   ValueType get() {
-    if (checkContent<ParamType>("get")) {
-      return parameters.template at<ParamType>().get();
-    }
+    return parameters.template at<ParamType>().get();
   }
 
   template<TgType ParamType, typename ValueType = typename ParamType::ValueType>
   void set(const ValueType& value) {
-    if constexpr (checkContent<ParamType>("set")) {
-      parameters.template at<ParamType>().set(value);
-    }
+    parameters.template at<ParamType>().set(value);
   }
 
   template<TgType ParamType>
@@ -60,9 +53,7 @@ public:
 
   template<TgType ParamType>
   constexpr void setParam(ParamType& param) {
-    if (checkContent<ParamType>("setParam")) {
-      parameters.template at<ParamType>().set(param.get());
-    }
+    parameters.template at<ParamType>().set(param.get());
   }
 
   template <TgType... Params>
@@ -72,6 +63,9 @@ public:
 
   template<TgType... T>
   friend std::string json::serialize(core::ParamManager<T...>& mngr);
+
+  template<TgType... T>
+  friend void json::deserialize(core::ParamManager<T...>& mngr, const std::string& json);
 protected:
   template<TgType T>
   constexpr bool checkContent(std::string method_name = "") {

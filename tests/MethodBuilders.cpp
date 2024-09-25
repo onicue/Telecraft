@@ -2,8 +2,11 @@
 #include <boost/test/unit_test.hpp>
 #include <telecraft/core/MethodBuilders.hpp>
 
+
+
 struct FirstMethod : telegram::core::MethodInfo<"first_method"> {
   void build() override {}
+  void deserialize(const std::string& json) override {};
   std::string getBody() override { return "";}
 };
 
@@ -12,6 +15,7 @@ struct SecondMethod : telegram::core::MethodInfo<"second_method",
                       telegram::core::http::Method::GET>
 {
   void build() override {}
+  void deserialize(const std::string& json) override {};
   std::string getBody() override { return "";}
 };
 

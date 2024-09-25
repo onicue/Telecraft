@@ -27,13 +27,24 @@ public:
   }
 
   void build() override {
-    switch(content_type) {
-      case core::http::ContentType::Json:
+    if constexpr (content_type == core::http::ContentType::Json) {
         body = json::serialize(*this);
-        break;
-      default:
-        std::cerr << "can't build body"<< std::endl;
-        throw std::invalid_argument("In function \"build()\" cannot identify content type. ContentTypecode: " + std::to_string(static_cast<int>(content_type)));
+    } else {
+        throw std::invalid_argument("In function \"build()\" cannot identify content type. ContentType code: "
+            + std::to_string(static_cast<int>(content_type)));
+    }
+  }
+
+  void deserialize(const std::string& json) override {
+    if (json.empty()) {
+        throw std::invalid_argument("Cannot deserialize " + std::string(name) + " an empty JSON string.");
+        return;
+    }
+
+    try {
+      json::deserialize(*this, json);
+    } catch (const std::exception& e){
+      std::cerr << "Cannot deserialize " + std::string(name) + ". " + e.what() << std::endl;
     }
   }
 

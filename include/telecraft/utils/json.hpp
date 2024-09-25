@@ -1,9 +1,9 @@
 #pragma once
 #include <glaze/json/json_t.hpp>
+#include <stdexcept>
 #include <type_traits>
 #include <glaze/glaze.hpp>
 #include "TgTypes.hpp"
-#include <iostream>
 
 namespace telegram {
 namespace core {
@@ -21,6 +21,11 @@ namespace json {
 
   template<>
   struct TypeMapper<int>{
+    using type = double;
+  };
+
+  template<>
+  struct TypeMapper<long int>{
     using type = double;
   };
 
@@ -45,48 +50,42 @@ namespace json {
         obj[param.getName()] = param.get();
       } else {
         //TODO
-        std::cerr << "Error: Method parameters are not yet supported. This feature will be added soon." << std::endl;
+          throw std::runtime_error("Method parameters are not yet supported. This feature will be added soon.");
       }
     });
 
     auto err = glz::write<glz::opts{}>(obj, buffer);
     if (err) {
-      std::cerr << "JSON write error: " << err.custom_error_message << std::endl;
+      throw std::runtime_error("JSON write error: " + std::string(err.custom_error_message));
     }
     return buffer;
   }
 
   template<TgType... T>
-  bool deserialize(core::ParamManager<T...>& mngr, const std::string& json){
+  void deserialize(core::ParamManager<T...>& mngr, const std::string& json){
     auto& container = mngr.parameters;
     object_t obj;
 
     auto err = glz::read_json(obj, json);
     if (err) {
-      std::cerr << "JSON parsing error: " << err.custom_error_message << std::endl;
-      return false;
+      throw std::runtime_error( "JSON parsing error: " + std::string(err.custom_error_message));
+      return;
     }
 
-    for (auto it = obj.begin(); it != obj.end(); ++it) {
-      const auto& key = it->first;
-      const auto& value = it->second;
+    for (const auto& [key, value] : obj) {
       try {
         auto& param = container.at(key);
-        if constexpr (!container.isMethod(param)) {
-          using ParamType = typename TypeMapper<typename std::decay_t<decltype(param)>::ValueType>::type;
-          param.set(value.get<ParamType>());
+        if (!container.isMethod(param)) {
+          param.deserialize(value);
         } else {
-          //TODO
-          std::cerr << "Error: Method parameters are not yet supported. This feature will be added soon." << std::endl;
+          throw std::runtime_error("Method parameters are not yet supported. This feature will be added soon.");
         }
-      } catch (const std::out_of_range& e) {
-        std::cerr << "Key '" << key << "' not found in container. Value: " << value.get<std::string>() << std::endl;
+      } catch (const std::out_of_range&) {
+        throw std::runtime_error("Key '" + key + "' not found in container.");
       } catch (const std::exception& e) {
-        std::cerr << "Error setting value for key '" << key << "': " << e.what() << std::endl;
+        throw std::runtime_error("Setting value for key '" + key + "': " + std::string(e.what()));
       }
     }
-
-    return true;
   }
 } //json
 } //telegram
