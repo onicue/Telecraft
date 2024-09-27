@@ -1,6 +1,6 @@
 #include "telecraft/api/params.hpp"
 #include <telecraft/api/methods.hpp>
-#include <telecraft/RequestManager.hpp>
+#include <telecraft/core/RequestManager.hpp>
 
 #include <iostream>
 
