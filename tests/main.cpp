@@ -1,11 +1,11 @@
 #include "telecraft/api/params.hpp"
 #include <telecraft/api/methods.hpp>
 #include <telecraft/core/RequestManager.hpp>
-
+#include <telecraft/BoostAsio.hpp>
 #include <iostream>
 
-#define TOKEN "token"
-#define CHATID 131
+#define TOKEN "3131"
+#define CHATID 1313
 
 using namespace telegram;
 
@@ -16,11 +16,13 @@ int main(){
   try{
     director.fields.token = TOKEN;
     director.fields.connection = "close";
+    director.header.addFieldToHeader("Keep-Alive: timeout=5, max=100");
 
     sendMessage->set<param::text>("fafafa");
     sendMessage->set<param::chat_id>(CHATID);
 
     director.newMethod(sendMessage);
+
     director.buildAll();
 
     std::string message = director.generateHTTP();
@@ -37,6 +39,13 @@ int main(){
     } else {
       std::cout << "Faild" << std::endl;
     }
+
+    boost::asio::io_context io_context;
+
+    telecraft::BoostClient c(TOKEN, io_context);
+
+    c.write(message);
+    io_context.run();
   } catch (const std::exception& e) {
     std::cout << e.what() << std::endl;
   }

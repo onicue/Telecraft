@@ -16,6 +16,7 @@ set(Boost_USE_STATIC_RUNTIME OFF)
 
 option(USE_BOOST "Use Boost libraries" ON)
 option(ENABLE_TESTS "Enable testing" ON)
+option(USE_OPENSSL "Use OpenSSL for SSL support" ON)
 
 add_library(${PROJECT_NAME} INTERFACE)
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
@@ -33,6 +34,15 @@ if(USE_BOOST OR ENABLE_TESTS)
     target_link_libraries(${PROJECT_NAME} INTERFACE Boost::system Boost::filesystem Boost::unit_test_framework)
   else()
     message(FATAL_ERROR "Boost not found!")
+  endif()
+endif()
+
+if(USE_OPENSSL)
+  find_package(OpenSSL REQUIRED)
+  if(OpenSSL_FOUND)
+    target_link_libraries(${PROJECT_NAME} INTERFACE OpenSSL::SSL OpenSSL::Crypto)
+  else()
+    message(FATAL_ERROR "OpenSSL not found!")
   endif()
 endif()
 

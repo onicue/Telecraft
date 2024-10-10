@@ -9,6 +9,8 @@ set(TestLibs #libraries for TestToRun
     Boost::filesystem
     Boost::system
     Boost::unit_test_framework
+    OpenSSL::SSL
+    OpenSSL::Crypto
     glaze::glaze
 )
 
