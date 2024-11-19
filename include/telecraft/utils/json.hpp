@@ -47,7 +47,7 @@ std::string serialize(core::ParamManager<T...>& mngr){
   std::string buffer;
 
   container.forEach([&obj, &container](const auto& param){
-    if constexpr (!container.isMethod(param)){
+    if (!container.isMethod(param)){
       obj[param.getName()] = param.get();
     } else {
       //TODO
