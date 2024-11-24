@@ -1,26 +1,20 @@
 #pragma once
 
-#ifndef TG_HOST
-#define TG_HOST "api.telegram.org"
-#endif
-
-#ifndef TG_PORT
-#define TG_PORT 443
-#endif
-
-#ifndef TO_STRING_HELPER
-#define TO_STRING_HELPER(x) #x
-#endif
-
-#ifndef TO_STRING
-#define TO_STRING(x) TO_STRING_HELPER(x)
-#endif
+constexpr const char* TG_HOST = "api.telegram.org";
+constexpr int TG_PORT = 433;
 
 namespace telegram {
 namespace core {
+  class BaseMethod;
+
   class IClient {
     public:
       virtual void close() = 0;
+      virtual ~IClient(){}
+
+      virtual void wite(BaseMethod* method);
+    private:
+
   };
 }
 }

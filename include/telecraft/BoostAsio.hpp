@@ -1,5 +1,4 @@
 #pragma once
-#include "core/ClientInterface.hpp"
 #include <boost/asio.hpp>
 #include <boost/asio/ssl.hpp>
 #include <boost/asio/ssl/verify_mode.hpp>
@@ -8,6 +7,8 @@
 #include <string>
 #include <memory>
 #include <mutex>
+
+#include "core/ClientInterface.hpp"
 
 namespace telecraft {
   using boost::asio::ip::tcp;
@@ -33,7 +34,7 @@ namespace telecraft {
     void connect() {
       try {
         tcp::resolver resolver(socket_.get_executor());
-        auto endpoints = resolver.resolve(TG_HOST, TO_STRING(TG_PORT));
+        auto endpoints = resolver.resolve(TG_HOST, std::to_string(TG_PORT));
 
         boost::asio::async_connect(socket_.lowest_layer(), endpoints,
           [this](const boost::system::error_code& error, const tcp::endpoint& /*endpoint*/) {

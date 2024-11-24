@@ -41,14 +41,14 @@ private:
 
   static inline std::string buildRequestLine(http::HeaderManager& header, BaseMethod* body) {
     return http::TC_Method[static_cast<int>(body->getMethod())] + " " +
-           header.getHeader()[0] + "/" + body->getName() +
+           "/bot" + header.getToken() + "/" + body->getName() +
            " HTTP/1.1" + fieldEnd;
   }
 
   static inline std::string buildHeaderFields(http::HeaderManager& header){
     std::string headerFields;
-    for (int i = 1; i < header.getHeader().size(); i++) {
-      headerFields += header.getHeader()[i] + fieldEnd;
+    for (auto field : header.getHeader()) {
+      headerFields += field + fieldEnd;
     }
 
     return headerFields;
@@ -69,19 +69,16 @@ private:
 
 class RequestComponentManager{
 public:
-  http::HeaderFields fields;
+  RequestComponentManager(const std::string& token) : header(token){}
+
   http::HeaderManager header;
 
-  void newMethod(BaseMethod* method){
+  void setMethod(BaseMethod* method){
     if(methodIsNull(method)){
       throw std::invalid_argument("Method is null in newMethod!");
     } else {
       this->method = method;
     }
-  }
-
-  void buildHeader(){
-    http::HeaderBuilder::build(header, fields);
   }
 
   void buildMethod(){
@@ -90,11 +87,6 @@ public:
       return;
     }
     method->build();
-  }
-
-  void buildAll(){
-    buildHeader();
-    buildMethod();
   }
 
   std::string generateHTTP(){

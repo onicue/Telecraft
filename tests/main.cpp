@@ -11,19 +11,17 @@ using namespace telegram;
 
 int main(){
 
-  core::RequestComponentManager director;
+  core::RequestComponentManager director(TOKEN);
   methods::SendMessage* sendMessage = new methods::SendMessage;
   try{
-    director.fields.token = TOKEN;
-    director.fields.connection = "close";
     director.header.addFieldToHeader("Keep-Alive: timeout=5, max=100");
 
     sendMessage->set<param::text>("fafafa");
     sendMessage->set<param::chat_id>(CHATID);
 
-    director.newMethod(sendMessage);
+    director.setMethod(sendMessage);
 
-    director.buildAll();
+    director.buildMethod();
 
     std::string message = director.generateHTTP();
     std::cout << message << std::endl;
@@ -40,12 +38,12 @@ int main(){
       std::cout << "Faild" << std::endl;
     }
 
-    boost::asio::io_context io_context;
+    //boost::asio::io_context io_context;
 
-    telecraft::BoostClient c(TOKEN, io_context);
+    //telecraft::BoostClient c(TOKEN, io_context);
 
-    c.write(message);
-    io_context.run();
+    //c.write(message);
+    //io_context.run();
   } catch (const std::exception& e) {
     std::cout << e.what() << std::endl;
   }
